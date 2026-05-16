@@ -1,0 +1,134 @@
+// EcoTracker - Esquema de Base de Datos
+// App de gestión financiera personal
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// Modelo de Usuario
+// ==========================================
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expenses Expense[]
+  incomes  Income[]
+  loans    Loan[]
+  payables Payable[]
+}
+
+// ==========================================
+// Modelo de Gastos
+// ==========================================
+model Expense {
+  id          String   @id @default(cuid())
+  category    String
+  description String
+  amount      Float
+  date        DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@index([userId, date])
+  @@index([userId, category])
+}
+
+// ==========================================
+// Modelo de Ingresos
+// ==========================================
+model Income {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  date        DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+// ==========================================
+// Modelo de Préstamos
+// ==========================================
+model Loan {
+  id              String   @id @default(cuid())
+  debtor          String
+  principalAmount Float
+  interestRate    Float
+  expectedProfit  Float
+  totalDue        Float
+  totalPaid       Float    @default(0)
+  pendingBalance  Float
+  date            DateTime @default(now())
+  status          String   @default("active")
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  advances       LoanAdvance[]
+  amplifications LoanAmplification[]
+
+  @@index([userId, status])
+}
+
+// ==========================================
+// Modelo de Adelantos de Préstamo
+// ==========================================
+model LoanAdvance {
+  id          String   @id @default(cuid())
+  amount      Float
+  description String?
+  date        DateTime @default(now())
+  loanId      String
+  loan        Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@index([loanId, date])
+}
+
+// ==========================================
+// Modelo de Ampliaciones de Préstamo
+// ==========================================
+model LoanAmplification {
+  id               String   @id @default(cuid())
+  additionalAmount Float
+  newInterestRate  Float?
+  newTotalDue      Float
+  reason           String?
+  date             DateTime @default(now())
+  loanId           String
+  loan             Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
+
+  @@index([loanId, date])
+}
+
+// ==========================================
+// Modelo de Cuentas por Pagar
+// ==========================================
+model Payable {
+  id          String   @id @default(cuid())
+  creditor    String
+  amount      Float
+  description String
+  status      String   @default("pending")
+  date        DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@index([userId, status])
+}
