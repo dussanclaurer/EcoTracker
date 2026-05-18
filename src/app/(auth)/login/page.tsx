@@ -9,10 +9,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -102,16 +102,16 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button 
+            <button 
               type="submit"
-              className="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white" 
+              className={buttonVariants({ className: "mt-2 bg-indigo-600 hover:bg-indigo-700 text-white" })}
               disabled={isLoading}
             >
               {isLoading && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               Iniciar Sesión
-            </Button>
+            </button>
           </div>
         </form>
       </div>

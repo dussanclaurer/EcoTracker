@@ -1,4 +1,4 @@
-import { Leaf } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function AuthLayout({
@@ -14,8 +14,8 @@ export default function AuthLayout({
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-indigo-900/40 via-zinc-900 to-zinc-900" />
         
         <div className="relative z-10 flex items-center gap-2">
-          <div className="bg-indigo-500 p-2 rounded-lg">
-            <Leaf className="w-6 h-6 text-white" />
+          <div className="bg-indigo-500 p-2 rounded-lg flex items-center justify-center">
+            <Image src="/Icon/favicon.png" alt="EcoTracker Logo" width={24} height={24} className="brightness-0 invert" />
           </div>
           <span className="text-xl font-bold tracking-tight text-white">EcoTracker</span>
         </div>
@@ -35,8 +35,8 @@ export default function AuthLayout({
         
         <div className="w-full max-w-sm space-y-8 relative z-10">
           <div className="flex items-center justify-center md:hidden gap-2 mb-8">
-            <div className="bg-indigo-500 p-2 rounded-lg">
-              <Leaf className="w-6 h-6 text-white" />
+            <div className="bg-indigo-500 p-2 rounded-lg flex items-center justify-center">
+              <Image src="/Icon/favicon.png" alt="EcoTracker Logo" width={24} height={24} className="brightness-0 invert" />
             </div>
             <span className="text-2xl font-bold tracking-tight text-white">EcoTracker</span>
           </div>

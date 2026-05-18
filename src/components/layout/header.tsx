@@ -12,8 +12,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Leaf, LogOut, Settings } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -40,8 +41,8 @@ export function Header() {
         
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="bg-indigo-500 p-1.5 rounded-md">
-            <Leaf className="w-5 h-5 text-white" />
+          <div className="bg-indigo-500 p-1.5 rounded-md flex items-center justify-center">
+            <Image src="/Icon/favicon.png" alt="EcoTracker Logo" width={20} height={20} className="brightness-0 invert" />
           </div>
           <span className="text-xl font-bold tracking-tight text-white hidden sm:inline-block">
             EcoTracker
