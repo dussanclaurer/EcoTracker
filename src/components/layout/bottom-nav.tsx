@@ -58,13 +58,13 @@ export function BottomNav() {
               <Icon
                 className={cn(
                   "w-5 h-5 mb-1 transition-transform group-hover:scale-110",
-                  isActive ? "text-indigo-400" : "text-zinc-500"
+                  isActive ? "text-indigo-400" : "text-zinc-400"
                 )}
               />
               <span
                 className={cn(
                   "text-[10px] truncate w-full text-center",
-                  isActive ? "text-indigo-400 font-semibold" : "text-zinc-500"
+                  isActive ? "text-indigo-400 font-semibold" : "text-zinc-400"
                 )}
               >
                 {item.name}

@@ -10,13 +10,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "EcoTracker",
   description: "App de gestión financiera personal",
+  icons: [{ rel: "icon", url: "/Icon/EcoTrackerIcon-V1.png" }],
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({
