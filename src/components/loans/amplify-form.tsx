@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, getLocalDateTimeString } from "@/lib/utils";
 
 interface AmplifyFormProps {
   loan: {
@@ -37,7 +37,7 @@ export function AmplifyForm({ loan }: AmplifyFormProps) {
   } = useForm<z.input<typeof loanAmplifySchema>>({
     resolver: zodResolver(loanAmplifySchema),
     defaultValues: {
-      date: new Date().toISOString().slice(0, 16),
+      date: getLocalDateTimeString(),
       newInterestRate: loan.interestRate,
     },
   });
@@ -162,6 +162,7 @@ export function AmplifyForm({ loan }: AmplifyFormProps) {
             className="h-12 bg-zinc-900/50 border-zinc-800 focus-visible:ring-blue-500 [color-scheme:dark]"
             disabled={isLoading}
             {...register("date")}
+            defaultValue={getLocalDateTimeString()}
           />
           {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
         </div>

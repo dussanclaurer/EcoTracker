@@ -14,6 +14,15 @@ export async function getLoans() {
       redirect("/login");
     }
 
+    // Obtener IDs de préstamos del usuario y recalcular todos
+    const loanIds = await prisma.loan.findMany({
+      where: { userId: session.user.id },
+      select: { id: true },
+    });
+
+    // Recalcular todos los préstamos en paralelo
+    await Promise.all(loanIds.map(l => recalculateLoan(l.id)));
+
     const loans = await prisma.loan.findMany({
       where: {
         userId: session.user.id,
@@ -38,12 +47,65 @@ export async function getLoans() {
   }
 }
 
+export async function recalculateLoan(loanId: string) {
+  try {
+    const loan = await prisma.loan.findUnique({
+      where: { id: loanId },
+      include: {
+        advances: true,
+        amplifications: {
+          orderBy: { date: "asc" },
+        },
+      },
+    });
+
+    if (!loan) return null;
+
+    // Recalcular ganancia esperada y total a cobrar
+    const expectedProfit = (loan.principalAmount * loan.interestRate) / 100;
+    const totalDue = loan.principalAmount + expectedProfit;
+
+    // Recalcular total pagado sumando todos los adelantos reales
+    const totalPaid = loan.advances.reduce((sum, adv) => sum + adv.amount, 0);
+    const pendingBalance = Math.max(0, totalDue - totalPaid);
+    const status = pendingBalance <= 0 ? "paid" : "active";
+
+    // Solo actualizar si hay diferencia (evitar escrituras innecesarias)
+    if (
+      loan.totalPaid !== totalPaid ||
+      loan.pendingBalance !== pendingBalance ||
+      loan.status !== status ||
+      loan.expectedProfit !== expectedProfit ||
+      loan.totalDue !== totalDue
+    ) {
+      await prisma.loan.update({
+        where: { id: loanId },
+        data: {
+          expectedProfit,
+          totalDue,
+          totalPaid,
+          pendingBalance,
+          status,
+        },
+      });
+    }
+
+    return { totalPaid, pendingBalance, totalDue, expectedProfit, status };
+  } catch (error) {
+    console.error("Error recalculating loan:", error);
+    return null;
+  }
+}
+
 export async function getLoanById(id: string) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       redirect("/login");
     }
+
+    // Recalcular valores antes de devolver los datos
+    await recalculateLoan(id);
 
     const loan = await prisma.loan.findUnique({
       where: { id },

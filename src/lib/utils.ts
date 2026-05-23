@@ -101,3 +101,17 @@ export function getCurrentMonthRange(): { start: Date; end: Date } {
 export function getMonthName(date: Date): string {
   return new Intl.DateTimeFormat("es-BO", { month: "long" }).format(date);
 }
+
+/**
+ * Genera un string de fecha/hora local en formato "YYYY-MM-DDTHH:mm"
+ * compatible con inputs de tipo datetime-local.
+ * 
+ * A diferencia de toISOString() que devuelve hora UTC,
+ * esta función devuelve la hora en la zona horaria local del usuario.
+ */
+export function getLocalDateTimeString(date?: Date): string {
+  const d = date ?? new Date();
+  const offset = d.getTimezoneOffset(); // minutos de diferencia respecto a UTC
+  const local = new Date(d.getTime() - offset * 60 * 1000);
+  return local.toISOString().slice(0, 16);
+}

@@ -7,6 +7,7 @@ import { incomeSchema, type IncomeInput } from "@/lib/validations/income";
 import { z } from "zod";
 import { createIncome } from "@/actions/income";
 import { useRouter } from "next/navigation";
+import { getLocalDateTimeString } from "@/lib/utils";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft } from "lucide-react";
 
@@ -26,7 +27,7 @@ export function IncomeForm() {
   } = useForm<z.input<typeof incomeSchema>>({
     resolver: zodResolver(incomeSchema),
     defaultValues: {
-      date: new Date().toISOString().slice(0, 16),
+      date: getLocalDateTimeString(),
     },
   });
 
@@ -104,6 +105,7 @@ export function IncomeForm() {
             className="h-12 bg-zinc-900/50 border-zinc-800 focus-visible:ring-emerald-500 [color-scheme:dark]"
             disabled={isLoading}
             {...register("date")}
+            defaultValue={getLocalDateTimeString()}
           />
           {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
         </div>

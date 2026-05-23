@@ -7,6 +7,7 @@ import { loanAdvanceSchema, type LoanAdvanceInput } from "@/lib/validations/loan
 import { z } from "zod";
 import { addLoanAdvance } from "@/actions/loans";
 import { toast } from "sonner";
+import { getLocalDateTimeString } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ export function AdvanceForm({ loanId, onSuccess }: AdvanceFormProps) {
   } = useForm<z.input<typeof loanAdvanceSchema>>({
     resolver: zodResolver(loanAdvanceSchema),
     defaultValues: {
-      date: new Date().toISOString().slice(0, 16),
+      date: getLocalDateTimeString(),
     },
   });
 
@@ -93,6 +94,7 @@ export function AdvanceForm({ loanId, onSuccess }: AdvanceFormProps) {
           className="h-10 bg-zinc-900/50 border-zinc-800 focus-visible:ring-blue-500 [color-scheme:dark]"
           disabled={isLoading}
           {...register("date")}
+          defaultValue={getLocalDateTimeString()}
         />
         {errors.date && <p className="text-xs text-red-500">{errors.date.message}</p>}
       </div>

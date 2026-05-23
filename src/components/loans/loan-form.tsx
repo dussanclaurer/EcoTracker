@@ -7,6 +7,7 @@ import { loanSchema, type LoanInput } from "@/lib/validations/loan";
 import { z } from "zod";
 import { createLoan } from "@/actions/loans";
 import { useRouter } from "next/navigation";
+import { getLocalDateTimeString } from "@/lib/utils";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft } from "lucide-react";
 
@@ -27,7 +28,7 @@ export function LoanForm() {
   } = useForm<z.input<typeof loanSchema>>({
     resolver: zodResolver(loanSchema),
     defaultValues: {
-      date: new Date().toISOString().slice(0, 16),
+      date: getLocalDateTimeString(),
       interestRate: 0,
     },
   });
@@ -131,6 +132,7 @@ export function LoanForm() {
             className="h-12 bg-zinc-900/50 border-zinc-800 focus-visible:ring-blue-500 [color-scheme:dark]"
             disabled={isLoading}
             {...register("date")}
+            defaultValue={getLocalDateTimeString()}
           />
           {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
         </div>

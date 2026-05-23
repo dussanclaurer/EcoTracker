@@ -7,6 +7,7 @@ import { expenseSchema, type ExpenseInput } from "@/lib/validations/expense";
 import { z } from "zod";
 import { createExpense } from "@/actions/expenses";
 import { useRouter } from "next/navigation";
+import { getLocalDateTimeString } from "@/lib/utils";
 import { toast } from "sonner";
 import { EXPENSE_CATEGORIES } from "@/lib/categories";
 import { Loader2, ArrowLeft } from "lucide-react";
@@ -35,7 +36,7 @@ export function ExpenseForm() {
   } = useForm<z.input<typeof expenseSchema>>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
-      date: new Date(),
+      date: getLocalDateTimeString(),
     },
   });
 
@@ -142,7 +143,7 @@ export function ExpenseForm() {
             className="h-12 bg-zinc-900/50 border-zinc-800 focus-visible:ring-indigo-500 [color-scheme:dark]"
             disabled={isLoading}
             {...register("date")}
-            defaultValue={new Date().toISOString().slice(0, 16)}
+            defaultValue={getLocalDateTimeString()}
           />
           {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
         </div>

@@ -7,6 +7,7 @@ import { payableSchema, type PayableInput } from "@/lib/validations/payable";
 import { z } from "zod";
 import { createPayable } from "@/actions/payables";
 import { useRouter } from "next/navigation";
+import { getLocalDateTimeString } from "@/lib/utils";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft } from "lucide-react";
 
@@ -26,7 +27,7 @@ export function PayableForm() {
   } = useForm<z.input<typeof payableSchema>>({
     resolver: zodResolver(payableSchema),
     defaultValues: {
-      date: new Date().toISOString().slice(0, 16),
+      date: getLocalDateTimeString(),
     },
   });
 
@@ -118,6 +119,7 @@ export function PayableForm() {
             className="h-12 bg-zinc-900/50 border-zinc-800 focus-visible:ring-rose-500 [color-scheme:dark]"
             disabled={isLoading}
             {...register("date")}
+            defaultValue={getLocalDateTimeString()}
           />
           {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
         </div>
