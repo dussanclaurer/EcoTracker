@@ -4,6 +4,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { MonthFilter } from "@/components/shared/month-filter";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,11 +13,18 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function ExpensesPage() {
-  // Obtenemos los gastos del mes actual (y anteriores por ahora)
-  const expenses = await getExpenses();
+export default async function ExpensesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const resolvedParams = await searchParams;
+  const currentMonth = typeof resolvedParams.month === "string" ? resolvedParams.month : undefined;
 
-  // Calcular el total
+  // Obtenemos los gastos filtrados por mes
+  const expenses = await getExpenses(currentMonth);
+
+  // Calcular el total del período seleccionado
   const total = expenses.reduce((acc, curr) => acc + curr.amount, 0);
 
   return (
@@ -26,16 +34,18 @@ export default async function ExpensesPage() {
         <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col items-center text-center">
-          <p className="text-indigo-100 font-medium mb-1">Total Gastos (Histórico)</p>
+          <p className="text-indigo-100 font-medium mb-1">
+            {currentMonth ? "Total de Gastos (Mes seleccionado)" : "Total de Gastos (Histórico)"}
+          </p>
           <h2 className="text-4xl font-bold text-white tracking-tight">
             {formatCurrency(total)}
           </h2>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
         <h3 className="text-lg font-medium text-white">Historial de Gastos</h3>
-        {/* Aquí podrían ir filtros en el futuro */}
+        <MonthFilter />
       </div>
 
       {/* Lista de Gastos */}

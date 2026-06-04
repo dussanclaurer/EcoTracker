@@ -39,7 +39,7 @@ export async function createExpense(data: z.infer<typeof expenseSchema>) {
   }
 }
 
-export async function getExpenses(month?: Date) {
+export async function getExpenses(month?: string) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -48,8 +48,11 @@ export async function getExpenses(month?: Date) {
 
     let dateFilter = {};
     if (month) {
-      const startOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
-      const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0, 23, 59, 59, 999);
+      // month is expected to be "YYYY-MM"
+      const [year, monthNum] = month.split("-").map(Number);
+      // monthNum in JS Date is 0-indexed, so we subtract 1
+      const startOfMonth = new Date(year, monthNum - 1, 1);
+      const endOfMonth = new Date(year, monthNum, 0, 23, 59, 59, 999);
       
       dateFilter = {
         date: {

@@ -7,7 +7,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function getLoans() {
+export async function getLoans(status?: "active" | "paid") {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -23,10 +23,17 @@ export async function getLoans() {
     // Recalcular todos los préstamos en paralelo
     await Promise.all(loanIds.map(l => recalculateLoan(l.id)));
 
+    // Construir los filtros
+    const whereClause: any = {
+      userId: session.user.id,
+    };
+
+    if (status) {
+      whereClause.status = status;
+    }
+
     const loans = await prisma.loan.findMany({
-      where: {
-        userId: session.user.id,
-      },
+      where: whereClause,
       orderBy: {
         date: "desc",
       },

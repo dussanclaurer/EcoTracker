@@ -3,6 +3,7 @@ import { IncomeList } from "@/components/income/income-list";
 import { formatCurrency } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { MonthFilter } from "@/components/shared/month-filter";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,8 +12,15 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function IncomePage() {
-  const incomes = await getIncomes();
+export default async function IncomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const resolvedParams = await searchParams;
+  const currentMonth = typeof resolvedParams.month === "string" ? resolvedParams.month : undefined;
+
+  const incomes = await getIncomes(currentMonth);
 
   const total = incomes.reduce((acc, curr) => acc + curr.amount, 0);
 
@@ -23,15 +31,18 @@ export default async function IncomePage() {
         <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col items-center text-center">
-          <p className="text-emerald-100 font-medium mb-1">Total Ingresos (Histórico)</p>
+          <p className="text-emerald-100 font-medium mb-1">
+            {currentMonth ? "Total de Ingresos (Mes seleccionado)" : "Total Ingresos (Histórico)"}
+          </p>
           <h2 className="text-4xl font-bold text-white tracking-tight">
             {formatCurrency(total)}
           </h2>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
         <h3 className="text-lg font-medium text-white">Historial de Ingresos</h3>
+        <MonthFilter />
       </div>
 
       {/* Lista de Ingresos */}
